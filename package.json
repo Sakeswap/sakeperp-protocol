@@ -1,0 +1,58 @@
+{
+  "name": "sake-perp",
+  "version": "1.0.0",
+  "description": "sake perpetual protocol",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "@opengsn/gsn": "^2.0.1",
+    "@openzeppelin/contracts-upgradeable": "3.3.0",
+    "truffle-contract-size": "^2.0.1"
+  },
+  "devDependencies": {
+    "@chainlink/contracts": "0.0.11",
+    "@openzeppelin/contracts": "^3.2.0",
+    "@openzeppelin/test-helpers": "^0.5.6",
+    "@truffle/core": "^5.1.48",
+    "@truffle/hdwallet-provider": "^1.1.0",
+    "bignumber.js": "9.0.1",
+    "bn.js": "5.1.3",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "cross-fetch": "3.0.6",
+    "eth-gas-reporter": "^0.2.17",
+    "ethers": "^5.0.26",
+    "ganache-cli": "^6.11.0",
+    "mocha-junit-reporter": "^2.0.0",
+    "prettier": "^2.1.2",
+    "prettier-plugin-solidity": "^1.0.0-alpha.59",
+    "solc": "0.7.3",
+    "solhint": "^3.2.1",
+    "solhint-plugin-prettier": "^0.0.5",
+    "solidity-coverage": "^0.7.11",
+    "solidity-docgen": "^0.5.7",
+    "truffle": "5.3.6",
+    "truffle-assertions": "^0.9.2",
+    "truffle-extract": "pooltogether/truffle-extract#2a57b6e63a8a2057aad0fec63ba255cd46e9ff1d",
+    "truffle-flattener": "^1.5.0",
+    "truffle-plugin-verify": "^0.5.8",
+    "dotenv-flow": "^3.2.0"
+  },
+  "scripts": {
+    "test": "npx truffle test",
+    "compile": "npx truffle compile",
+    "prebuild": "npm run compile",
+    "build": "npx truffle compile",
+    "coverage": "COVERAGE=true npx truffle run coverage --temp build",
+    "deploy": "npx truffle migrate --network rinkeby",
+    "start": "npx ganache-cli -l 10000038 -i 1234 -e 100000 -a 10 -u 0 -g 1000000000 --allowUnlimitedContractSize -m \"$HDWALLET_MNEMONIC\"",
+    "version": "npx truffle version",
+    "docs": "npx solidity-docgen -o docs -i contracts -s single",
+    "extract-abis": "npx truffle-extract -o .abis",
+    "solhint": "npx solhint -f table contracts/*.sol",
+    "prettier:solidity": "npx prettier --write contracts/**/*.sol",
+    "prettier:js": "npx prettier --write test/**/*.js"
+  }
+}
