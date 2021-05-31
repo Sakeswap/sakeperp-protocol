@@ -1142,4 +1142,37 @@ contract Exchange is IExchange, OwnableUpgradeable, BlockContext {
     ) public override onlyCounterParty {
         totalPositionSize = totalPositionSize.addD(adjustedPosition).subD(oldAdjustedPosition);
     }
+
+    function checkMovingAmmPrice(uint256 _oraclePrice) public view returns (bool) {
+        if (!open || priceAdjustRatio.toUint() == 0) return false;
+
+        Decimal.decimal memory oraclePrice = Decimal.decimal(_oraclePrice);
+        Decimal.decimal memory AMMPrice = quoteAssetReserve.divD(baseAssetReserve);
+        if (MixedDecimal.fromDecimal(oraclePrice).subD(AMMPrice).abs().cmp(oraclePriceSpreadLimit.mulD(AMMPrice)) > 0) {
+            return false;
+        }
+
+        Decimal.decimal memory adjustPrice =
+            MixedDecimal
+                .fromDecimal(AMMPrice)
+                .addD(MixedDecimal.fromDecimal(oraclePrice).subD(AMMPrice).mulD(priceAdjustRatio))
+                .abs();
+
+        // baseAssetReserve * oraclePrice * baseAssetReserve = invariant
+        Decimal.decimal memory invariant = quoteAssetReserve.mulD(baseAssetReserve);
+        uint256 basePow = invariant.divD(adjustPrice).toUint().mul(Decimal.one().toUint());
+        Decimal.decimal memory _baseAssetReserve = Decimal.decimal(basePow.sqrt());
+        Decimal.decimal memory _quoteAssetReserve = invariant.divD(_baseAssetReserve);
+
+        SignedDecimal.signedDecimal memory MMPNL = getMMUnrealizedPNL(_baseAssetReserve, _quoteAssetReserve);
+        SignedDecimal.signedDecimal memory MMLiquidity = sakePerpVault.getTotalMMAvailableLiquidity(address(this));
+        Decimal.decimal memory MMCachedLiquidity = sakePerpVault.getTotalMMCachedLiquidity(address(this));
+
+        // negative means MM can't pay for this price movement
+        if (MMPNL.addD(MMLiquidity).addD(MMCachedLiquidity).isNegative()) {
+            return false;
+        }
+
+        return true;
+    }
 }
