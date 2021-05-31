@@ -1,5 +1,5 @@
 # sakeperp
-[https://bsc.sakeperp.fi](https://bsc.sakeperp.fi/). A decentralised perpetual system on chain, feel free to read the code. More details coming soon.
+[https://app.sakeperp.fi](https://app.sakeperp.fi). A decentralised perpetual system on chain, feel free to read the code.
 
 
 
